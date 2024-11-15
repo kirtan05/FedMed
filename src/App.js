@@ -1,25 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { LightTheme, DarkTheme, BaseProvider } from 'baseui';
+import { Provider as StyletronProvider } from 'styletron-react';
+import { Client as Styletron } from 'styletron-engine-atomic';
+import { ToasterContainer } from 'baseui/toast';
+import Navbar from './components/Navbar';
+import Dashboard from './components/Dashboard';
+import SubmitModel from './components/SubmitModel';
+import Rewards from './components/Rewards';
+import History from './components/History';
+import { UserProvider } from './contexts/UserContext';
 
-function App() {
+const App = () => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const engine = new Styletron();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <StyletronProvider value={engine}>
+      <BaseProvider theme={isDarkMode ? DarkTheme : LightTheme}>
+        <UserProvider>
+          <Router>
+            <Navbar isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+            <ToasterContainer />
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/submit" element={<SubmitModel />} />
+              <Route path="/rewards" element={<Rewards />} />
+              <Route path="/history" element={<History />} />
+            </Routes>
+          </Router>
+        </UserProvider>
+      </BaseProvider>
+    </StyletronProvider>
   );
-}
+};
 
 export default App;
